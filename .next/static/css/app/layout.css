@@ -1136,6 +1136,9 @@ video {
   font-size: 0.75rem;
   line-height: 1rem;
 }
+.text-\[10px\]{
+  font-size: 10px;
+}
 .font-semibold{
   font-weight: 600;
 }
@@ -1237,6 +1240,9 @@ video {
 }
 .text-steel\/40{
   color: rgb(74 127 165 / 0.4);
+}
+.text-steel\/70{
+  color: rgb(74 127 165 / 0.7);
 }
 .opacity-0{
   opacity: 0;
@@ -1460,6 +1466,9 @@ body::before {
 }
 .hover\:border-steel\/50:hover{
   border-color: rgb(74 127 165 / 0.5);
+}
+.hover\:border-opacity-50:hover{
+  --tw-border-opacity: 0.5;
 }
 .hover\:bg-amber-dim:hover{
   --tw-bg-opacity: 1;

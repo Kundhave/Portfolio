@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState } from 'react'
+import { useRef } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 const STACK_LAYERS = [
@@ -9,10 +9,9 @@ const STACK_LAYERS = [
     name: 'CORE LANGUAGES',
     color: 'amber',
     items: [
-      { name: 'Python', proficiency: 92, note: 'Primary — backend, ML, scripting' },
-      { name: 'SQL', proficiency: 85, note: 'Complex queries, schema design' },
-      { name: 'TypeScript', proficiency: 72, note: 'Next.js, type-safe APIs' },
-      { name: 'C', proficiency: 65, note: 'Systems-level understanding' },
+      { name: 'Python', tags: ['Event-driven APIs', 'Async tasks', 'ML integration', 'Service design'] },
+      { name: 'SQL', tags: ['Complex joins', 'Window functions', 'Query optimization', 'Schema design'] },
+      { name: 'Java', tags: ['DSA', 'OOP', 'Collections framework', 'Multithreading'] },
     ],
   },
   {
@@ -20,10 +19,10 @@ const STACK_LAYERS = [
     name: 'BACKEND & APIs',
     color: 'steel',
     items: [
-      { name: 'FastAPI', proficiency: 90, note: 'Primary REST framework' },
-      { name: 'REST API Design', proficiency: 88, note: 'Contract-first, versioned APIs' },
-      { name: 'Redis', proficiency: 82, note: 'Caching, pub/sub, task queues' },
-      { name: 'Celery', proficiency: 78, note: 'Distributed task processing' },
+      { name: 'FastAPI', tags: ['Dependency injection', 'Pydantic models', 'Async endpoints', 'OpenAPI specs'] },
+      { name: 'REST API Design', tags: ['Contract-first', 'Versioned APIs', 'Idempotent endpoints'] },
+      { name: 'Redis', tags: ['Caching layer', 'Rate limiting', 'Worker queues'] },
+      { name: 'Celery', tags: ['Distributed tasks', 'Retry policies', 'Task chaining'] },
     ],
   },
   {
@@ -31,10 +30,10 @@ const STACK_LAYERS = [
     name: 'DATA LAYER',
     color: 'moss',
     items: [
-      { name: 'PostgreSQL', proficiency: 87, note: 'Production DB, complex schemas' },
-      { name: 'MongoDB', proficiency: 75, note: 'Document store, aggregations' },
-      { name: 'MySQL', proficiency: 78, note: 'Relational workloads' },
-      { name: 'Pandas / NumPy', proficiency: 83, note: 'Data analysis, transformations' },
+      { name: 'PostgreSQL', tags: ['ACID transactions', 'Idempotent writes', 'Schema design'] },
+      { name: 'MongoDB', tags: ['Document modeling', 'Aggregation pipelines', 'Flexible schemas'] },
+      { name: 'MySQL', tags: ['Relational workloads', 'Indexing strategies'] },
+      { name: 'Pandas / NumPy', tags: ['Data wrangling', 'Feature engineering', 'Statistical analysis'] },
     ],
   },
   {
@@ -42,11 +41,11 @@ const STACK_LAYERS = [
     name: 'AI / ML',
     color: 'amber',
     items: [
-      { name: 'OpenAI API / GPT-4o', proficiency: 88, note: 'RAG pipelines, prompt engineering' },
-      { name: 'LangChain', proficiency: 82, note: 'RAG, chains, agents' },
-      { name: 'Vector Databases', proficiency: 80, note: 'Similarity search, embeddings' },
-      { name: 'Scikit-learn', proficiency: 75, note: 'Classical ML, feature engineering' },
-      { name: 'PyTorch / TensorFlow', proficiency: 65, note: 'Working knowledge, CV models' },
+      { name: 'OpenAI API / GPT-4o', tags: ['RAG pipelines', 'Prompt engineering', 'Function calling'] },
+      { name: 'LangChain', tags: ['Chain orchestration', 'Agent design', 'RAG workflows'] },
+      { name: 'Vector Databases', tags: ['Similarity search', 'Embedding pipelines'] },
+      { name: 'Scikit-learn', tags: ['Classical ML', 'Feature engineering', 'Model evaluation'] },
+      { name: 'PyTorch / TensorFlow', tags: ['Neural networks', 'CV models', 'Transfer learning'] },
     ],
   },
   {
@@ -54,9 +53,9 @@ const STACK_LAYERS = [
     name: 'INFRA & OBSERVABILITY',
     color: 'steel',
     items: [
-      { name: 'Docker', proficiency: 85, note: 'Containerization, compose stacks' },
-      { name: 'Prometheus', proficiency: 78, note: 'Metrics instrumentation, alerting' },
-      { name: 'Git', proficiency: 88, note: 'Branching, CI/CD integration' },
+      { name: 'Docker', tags: ['Multi-stage builds', 'Compose stacks', 'Container networking'] },
+      { name: 'Prometheus', tags: ['Metrics instrumentation', 'Alert rules', 'Grafana dashboards'] },
+      { name: 'Git', tags: ['Branch strategies', 'CI/CD pipelines', 'Code review workflows'] },
     ],
   },
   {
@@ -64,62 +63,55 @@ const STACK_LAYERS = [
     name: 'CLOUD PLATFORMS',
     color: 'moss',
     items: [
-      { name: 'Azure', proficiency: 80, note: 'Event Hubs, Functions — production project' },
-      { name: 'AWS', proficiency: 72, note: 'S3, Lambda, EC2 — working experience' },
-      { name: 'GCP', proficiency: 65, note: 'Cloud Run, BigQuery — working experience' },
+      { name: 'Azure', tags: ['Event Hubs', 'Functions', 'Production deployments'] },
+      { name: 'AWS', tags: ['S3', 'Lambda', 'EC2', 'IAM policies'] },
+      { name: 'GCP', tags: ['Cloud Run', 'BigQuery', 'Pub/Sub'] },
     ],
   },
 ]
 
-const COLOR_MAP: Record<string, { bar: string; text: string; border: string }> = {
-  amber: { bar: 'bg-amber', text: 'text-amber', border: 'border-amber/20' },
-  steel: { bar: 'bg-steel', text: 'text-steel', border: 'border-steel/20' },
-  moss: { bar: 'bg-moss', text: 'text-moss', border: 'border-moss/20' },
+const COLOR_MAP: Record<string, { bg: string; text: string; border: string; tagBg: string; tagText: string }> = {
+  amber: { bg: 'bg-amber', text: 'text-amber', border: 'border-amber/20', tagBg: 'bg-amber/10', tagText: 'text-amber/70' },
+  steel: { bg: 'bg-steel', text: 'text-steel', border: 'border-steel/20', tagBg: 'bg-steel/10', tagText: 'text-steel/70' },
+  moss: { bg: 'bg-moss', text: 'text-moss', border: 'border-moss/20', tagBg: 'bg-moss/10', tagText: 'text-moss/70' },
 }
 
-function SkillBar({ name, proficiency, note, color, delay }: {
-  name: string; proficiency: number; note: string; color: string; delay: number
+function SkillCard({ name, tags, color, delay }: {
+  name: string; tags: string[]; color: string; delay: number
 }) {
   const ref = useRef(null)
   const inView = useInView(ref, { once: true })
-  const [hovered, setHovered] = useState(false)
   const c = COLOR_MAP[color]
 
   return (
-    <div
+    <motion.div
       ref={ref}
-      className="group cursor-default"
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      className="group"
+      initial={{ opacity: 0, y: 8 }}
+      animate={inView ? { opacity: 1, y: 0 } : {}}
+      transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
     >
-      <div className="flex items-center justify-between mb-1">
-        <span className="font-mono text-xs text-cream/70 group-hover:text-cream transition-colors tracking-wide">
+      <div className="mb-2">
+        <span className={`font-mono text-xs ${c.text} tracking-wide`}>
           {name}
         </span>
-        <span className={`font-mono text-xs ${hovered ? c.text : 'text-cream-dim/30'} transition-colors`}>
-          {proficiency}%
-        </span>
       </div>
 
-      {/* Progress bar */}
-      <div className="h-px bg-cream-faint/20 relative overflow-hidden">
-        <motion.div
-          className={`absolute left-0 top-0 h-full ${c.bar}`}
-          initial={{ width: 0 }}
-          animate={inView ? { width: `${proficiency}%` } : { width: 0 }}
-          transition={{ delay, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
-        />
+      <div className="flex flex-wrap gap-1.5">
+        {tags.map((tag, i) => (
+          <motion.span
+            key={tag}
+            className={`font-mono text-[10px] ${c.tagBg} ${c.tagText} px-2 py-0.5 border ${c.border} 
+              hover:border-opacity-50 transition-all duration-200 tracking-wide`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: delay + i * 0.05, duration: 0.3 }}
+          >
+            {tag}
+          </motion.span>
+        ))}
       </div>
-
-      {/* Note on hover */}
-      <motion.div
-        className="overflow-hidden"
-        animate={{ height: hovered ? 'auto' : 0, opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.2 }}
-      >
-        <div className={`font-mono text-xs ${c.text}/50 pt-1 italic`}>{note}</div>
-      </motion.div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -137,8 +129,8 @@ function LayerPanel({ layer, index }: { layer: typeof STACK_LAYERS[0]; index: nu
       transition={{ delay: index * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
     >
       <div className={`absolute top-0 left-0 right-0 h-px ${layer.color === 'amber' ? 'bg-gradient-to-r from-amber/30 to-transparent' :
-          layer.color === 'steel' ? 'bg-gradient-to-r from-steel/30 to-transparent' :
-            'bg-gradient-to-r from-moss/30 to-transparent'
+        layer.color === 'steel' ? 'bg-gradient-to-r from-steel/30 to-transparent' :
+          'bg-gradient-to-r from-moss/30 to-transparent'
         }`} />
 
       <div className="flex items-center gap-3 mb-5">
@@ -152,7 +144,7 @@ function LayerPanel({ layer, index }: { layer: typeof STACK_LAYERS[0]; index: nu
 
       <div className="space-y-4">
         {layer.items.map((item, i) => (
-          <SkillBar
+          <SkillCard
             key={item.name}
             {...item}
             color={layer.color}
