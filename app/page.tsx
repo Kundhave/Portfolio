@@ -13,10 +13,10 @@ export default function Home() {
     <main>
       <Nav />
       <Hero />
-      <Systems />
       <Projects />
       <Stack />
       <ParallelProcesses />
+      <Systems />
       <Contact />
     </main>
   )

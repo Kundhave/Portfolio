@@ -107,7 +107,7 @@ export default function Hero() {
   return (
     <section
       ref={ref}
-      className="relative min-h-screen flex flex-col justify-center overflow-hidden bg-charcoal"
+      className="relative min-h-[85vh] flex flex-col justify-center overflow-hidden bg-charcoal"
       id="hero"
     >
       <SystemGrid />
@@ -167,7 +167,7 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2 }}
             >
               <h1 className="font-display text-7xl md:text-9xl text-cream tracking-widest leading-none">
-                KUNDHAVE
+                KUNDHAVE S
               </h1>
               <div className="flex items-center gap-4 mt-2">
                 <div className="h-px flex-1 bg-amber/20" />
@@ -288,15 +288,6 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2"
-        animate={{ y: [0, 8, 0] }}
-        transition={{ duration: 2, repeat: Infinity, ease: 'easeInOut' }}
-      >
-        <span className="font-mono text-xs text-cream-dim/30 tracking-widest">SCROLL</span>
-        <div className="w-px h-8 bg-gradient-to-b from-amber/40 to-transparent" />
-      </motion.div>
     </section>
   )
 }

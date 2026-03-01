@@ -7,113 +7,55 @@ const STACK_LAYERS = [
   {
     layer: 'L0',
     name: 'CORE LANGUAGES',
-    color: 'amber',
-    items: [
-      { name: 'Python', tags: ['Event-driven APIs', 'Async tasks', 'ML integration', 'Service design'] },
-      { name: 'SQL', tags: ['Complex joins', 'Window functions', 'Query optimization', 'Schema design'] },
-      { name: 'Java', tags: ['DSA', 'OOP', 'Collections framework', 'Multithreading'] },
-    ],
+    color: 'amber' as const,
+    items: ['Python', 'SQL', 'Java'],
   },
   {
     layer: 'L1',
     name: 'BACKEND & APIs',
-    color: 'steel',
-    items: [
-      { name: 'FastAPI', tags: ['Dependency injection', 'Pydantic models', 'Async endpoints', 'OpenAPI specs'] },
-      { name: 'REST API Design', tags: ['Contract-first', 'Versioned APIs', 'Idempotent endpoints'] },
-      { name: 'Redis', tags: ['Caching layer', 'Rate limiting', 'Worker queues'] },
-      { name: 'Celery', tags: ['Distributed tasks', 'Retry policies', 'Task chaining'] },
-    ],
+    color: 'steel' as const,
+    items: ['FastAPI', 'REST API Design', 'Redis', 'Celery'],
   },
   {
     layer: 'L2',
     name: 'DATA LAYER',
-    color: 'moss',
-    items: [
-      { name: 'PostgreSQL', tags: ['ACID transactions', 'Idempotent writes', 'Schema design'] },
-      { name: 'MongoDB', tags: ['Document modeling', 'Aggregation pipelines', 'Flexible schemas'] },
-      { name: 'MySQL', tags: ['Relational workloads', 'Indexing strategies'] },
-      { name: 'Pandas / NumPy', tags: ['Data wrangling', 'Feature engineering', 'Statistical analysis'] },
-    ],
+    color: 'moss' as const,
+    items: ['PostgreSQL', 'MongoDB', 'MySQL', 'Pandas / NumPy'],
   },
   {
     layer: 'L3',
     name: 'AI / ML',
-    color: 'amber',
-    items: [
-      { name: 'OpenAI API / GPT-4o', tags: ['RAG pipelines', 'Prompt engineering', 'Function calling'] },
-      { name: 'LangChain', tags: ['Chain orchestration', 'Agent design', 'RAG workflows'] },
-      { name: 'Vector Databases', tags: ['Similarity search', 'Embedding pipelines'] },
-      { name: 'Scikit-learn', tags: ['Classical ML', 'Feature engineering', 'Model evaluation'] },
-      { name: 'PyTorch / TensorFlow', tags: ['Neural networks', 'CV models', 'Transfer learning'] },
-    ],
+    color: 'amber' as const,
+    items: ['OpenAI API / GPT-4o', 'LangChain', 'Vector Databases', 'Scikit-learn', 'PyTorch / TensorFlow'],
   },
   {
     layer: 'L4',
     name: 'INFRA & OBSERVABILITY',
-    color: 'steel',
-    items: [
-      { name: 'Docker', tags: ['Multi-stage builds', 'Compose stacks', 'Container networking'] },
-      { name: 'Prometheus', tags: ['Metrics instrumentation', 'Alert rules', 'Grafana dashboards'] },
-      { name: 'Git', tags: ['Branch strategies', 'CI/CD pipelines', 'Code review workflows'] },
-    ],
+    color: 'steel' as const,
+    items: ['Docker', 'Prometheus', 'Git'],
   },
   {
     layer: 'L5',
     name: 'CLOUD PLATFORMS',
-    color: 'moss',
-    items: [
-      { name: 'Azure', tags: ['Event Hubs', 'Functions', 'Production deployments'] },
-      { name: 'AWS', tags: ['S3', 'Lambda', 'EC2', 'IAM policies'] },
-      { name: 'GCP', tags: ['Cloud Run', 'BigQuery', 'Pub/Sub'] },
-    ],
+    color: 'moss' as const,
+    items: ['Azure', 'AWS', 'GCP'],
   },
 ]
 
-const COLOR_MAP: Record<string, { bg: string; text: string; border: string; tagBg: string; tagText: string }> = {
-  amber: { bg: 'bg-amber', text: 'text-amber', border: 'border-amber/20', tagBg: 'bg-amber/10', tagText: 'text-amber/70' },
-  steel: { bg: 'bg-steel', text: 'text-steel', border: 'border-steel/20', tagBg: 'bg-steel/10', tagText: 'text-steel/70' },
-  moss: { bg: 'bg-moss', text: 'text-moss', border: 'border-moss/20', tagBg: 'bg-moss/10', tagText: 'text-moss/70' },
+const COLOR_MAP: Record<string, { text: string; border: string; bg: string; glow: string }> = {
+  amber: { text: 'text-amber', border: 'border-amber/20', bg: 'bg-amber/8', glow: 'hover:shadow-[0_0_12px_rgba(224,123,57,0.08)]' },
+  steel: { text: 'text-steel', border: 'border-steel/20', bg: 'bg-steel/8', glow: 'hover:shadow-[0_0_12px_rgba(74,127,165,0.08)]' },
+  moss: { text: 'text-moss', border: 'border-moss/20', bg: 'bg-moss/8', glow: 'hover:shadow-[0_0_12px_rgba(122,162,84,0.08)]' },
 }
 
-function SkillCard({ name, tags, color, delay }: {
-  name: string; tags: string[]; color: string; delay: number
-}) {
-  const ref = useRef(null)
-  const inView = useInView(ref, { once: true })
-  const c = COLOR_MAP[color]
-
-  return (
-    <motion.div
-      ref={ref}
-      className="group"
-      initial={{ opacity: 0, y: 8 }}
-      animate={inView ? { opacity: 1, y: 0 } : {}}
-      transition={{ delay, duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-    >
-      <div className="mb-2">
-        <span className={`font-mono text-xs ${c.text} tracking-wide`}>
-          {name}
-        </span>
-      </div>
-
-      <div className="flex flex-wrap gap-1.5">
-        {tags.map((tag, i) => (
-          <motion.span
-            key={tag}
-            className={`font-mono text-[10px] ${c.tagBg} ${c.tagText} px-2 py-0.5 border ${c.border} 
-              hover:border-opacity-50 transition-all duration-200 tracking-wide`}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={inView ? { opacity: 1, scale: 1 } : {}}
-            transition={{ delay: delay + i * 0.05, duration: 0.3 }}
-          >
-            {tag}
-          </motion.span>
-        ))}
-      </div>
-    </motion.div>
-  )
-}
+const CERTS = [
+  { name: 'Snowflake Data Warehousing', issuer: 'Snowflake' },
+  { name: 'Developing Serverless Solutions on AWS', issuer: 'AWS' },
+  { name: 'Supervised ML: Regression and Classification', issuer: 'DeepLearning.AI' },
+  { name: 'Full-stack Development', issuer: 'Udemy' },
+  { name: 'Intro to Deep Learning', issuer: 'DataCamp' },
+  { name: 'PyTorch Workshop', issuer: 'IETE' },
+]
 
 function LayerPanel({ layer, index }: { layer: typeof STACK_LAYERS[0]; index: number }) {
   const ref = useRef(null)
@@ -123,7 +65,7 @@ function LayerPanel({ layer, index }: { layer: typeof STACK_LAYERS[0]; index: nu
   return (
     <motion.div
       ref={ref}
-      className={`border ${c.border} bg-charcoal-2 p-6 relative`}
+      className={`border ${c.border} bg-charcoal-2 p-5 relative`}
       initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
       animate={inView ? { opacity: 1, x: 0 } : {}}
       transition={{ delay: index * 0.08, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
@@ -133,7 +75,8 @@ function LayerPanel({ layer, index }: { layer: typeof STACK_LAYERS[0]; index: nu
           'bg-gradient-to-r from-moss/30 to-transparent'
         }`} />
 
-      <div className="flex items-center gap-3 mb-5">
+      {/* Layer header */}
+      <div className="flex items-center gap-3 mb-4">
         <span className={`font-mono text-xs ${c.text}/60 border ${c.border} px-2 py-0.5 tracking-widest`}>
           {layer.layer}
         </span>
@@ -142,25 +85,24 @@ function LayerPanel({ layer, index }: { layer: typeof STACK_LAYERS[0]; index: nu
         </span>
       </div>
 
-      <div className="space-y-4">
+      {/* Tech items — compact grid */}
+      <div className="flex flex-wrap gap-2">
         {layer.items.map((item, i) => (
-          <SkillCard
-            key={item.name}
-            {...item}
-            color={layer.color}
-            delay={0.2 + i * 0.07}
-          />
+          <motion.div
+            key={item}
+            className={`font-mono text-xs ${c.text}/80 ${c.bg} border ${c.border} px-3 py-1.5 tracking-wide
+              hover:border-opacity-60 ${c.glow} transition-all duration-300 cursor-default`}
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={inView ? { opacity: 1, scale: 1 } : {}}
+            transition={{ delay: 0.15 + i * 0.04, duration: 0.3 }}
+          >
+            {item}
+          </motion.div>
         ))}
       </div>
     </motion.div>
   )
 }
-
-const CERTS = [
-  'Snowflake Data Warehousing Workshop',
-  'Machine Learning Specialization',
-  'Intro to Deep Learning',
-]
 
 export default function Stack() {
   const ref = useRef(null)
@@ -178,14 +120,14 @@ export default function Stack() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center gap-4 mb-6">
-            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 03</span>
+            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 02</span>
             <div className="h-px w-16 bg-amber/20" />
           </div>
           <h2 className="font-display text-5xl md:text-7xl text-cream tracking-widest">
             SYSTEM<br /><span className="text-amber">STACK</span>
           </h2>
           <p className="mt-6 font-mono text-sm text-cream-dim/50 max-w-xl leading-relaxed">
-            Visualized by system layer — from language primitives to infrastructure. Hover each skill for context.
+            Organized by system layer — from language primitives to cloud infrastructure.
           </p>
         </motion.div>
 
@@ -197,11 +139,12 @@ export default function Stack() {
 
           {/* Certifications panel */}
           <motion.div
-            className="border border-cream-faint/10 bg-charcoal-2 p-6 relative"
+            className="border border-cream-faint/10 bg-charcoal-2 p-5 relative md:col-span-2 xl:col-span-3"
             initial={{ opacity: 0, y: 20 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-amber/20 via-steel/20 to-transparent" />
             <div className="flex items-center gap-3 mb-5">
               <span className="font-mono text-xs text-cream-dim/40 border border-cream-faint/20 px-2 py-0.5 tracking-widest">
                 CERTS
@@ -209,13 +152,26 @@ export default function Stack() {
               <span className="font-mono text-sm text-cream-dim/60 tracking-[0.2em]">
                 CREDENTIALS
               </span>
+              <div className="flex-1 h-px bg-cream-faint/8" />
+              <span className="font-mono text-[10px] text-cream-dim/20 tracking-wider">
+                {CERTS.length} VERIFIED
+              </span>
             </div>
-            <div className="space-y-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
               {CERTS.map((cert, i) => (
-                <div key={i} className="flex items-start gap-2">
-                  <span className="text-amber/40 mt-0.5">◆</span>
-                  <span className="font-mono text-xs text-cream/60 leading-relaxed">{cert}</span>
-                </div>
+                <motion.div
+                  key={i}
+                  className="flex items-start gap-2.5 p-3 border border-cream-faint/8 bg-charcoal-3/50 hover:border-amber/20 transition-all duration-300 group"
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={inView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: 0.6 + i * 0.05, duration: 0.3 }}
+                >
+                  <span className="text-amber/40 group-hover:text-amber/70 transition-colors mt-0.5 text-xs">◆</span>
+                  <div>
+                    <div className="font-mono text-xs text-cream/60 leading-relaxed group-hover:text-cream transition-colors">{cert.name}</div>
+                    <div className="font-mono text-[10px] text-cream-dim/30 tracking-wider mt-0.5">{cert.issuer}</div>
+                  </div>
+                </motion.div>
               ))}
             </div>
           </motion.div>

@@ -16,12 +16,13 @@ const PROJECTS = [
     version: 'v0.8.2-alpha',
     uptime: 'IN PROGRESS',
     stack: ['Azure Event Hubs', 'Azure Functions', 'GPT-4o', 'RAG', 'Redis', 'Python', 'Entra ID'],
-    description: 'Cloud-native, event-driven pre-trade risk engine on Microsoft Azure. Intercepts and validates institutional trade orders using stateless Functions with sub-millisecond deterministic checks for fat-finger errors and position limits.',
+    description: 'Cloud-native, event-driven pre-trade risk engine on Microsoft Azure. Intercepts and validates institutional trade orders using stateless Functions with sub-millisecond deterministic checks for fat-finger errors and position limits. Shipped a shadow-mode anomaly detection layer (Isolation Forest + Autoencoder) that runs fully isolated from core validation logic, enabling safe ML experimentation without production risk.',
     modules: [
       { name: 'Risk Engine', status: 'active', detail: 'Sub-ms fat-finger + position limit checks' },
       { name: 'Regulatory AI', status: 'active', detail: 'RAG-powered SEC/FINRA PDF extraction' },
       { name: 'Audit Trail', status: 'active', detail: 'WORM-policy immutable Golden Record' },
       { name: 'Zero-Trust Auth', status: 'active', detail: 'Microsoft Entra ID enforcement' },
+      { name: 'Anomaly Detection', status: 'active', detail: 'Shadow-mode Isolation Forest + Autoencoder — isolated from core validation' },
     ],
     highlight: 'AI-driven compliance automation — reducing regulatory update latency from days to minutes.',
   },
@@ -123,8 +124,8 @@ function ProjectPanel({ project, index }: { project: typeof PROJECTS[0]; index: 
       {/* Top accent line */}
       <div
         className={`absolute top-0 left-0 right-0 h-px ${project.statusColor === 'amber' ? 'bg-gradient-to-r from-amber/50 to-transparent' :
-            project.statusColor === 'moss' ? 'bg-gradient-to-r from-moss/50 to-transparent' :
-              'bg-gradient-to-r from-steel/50 to-transparent'
+          project.statusColor === 'moss' ? 'bg-gradient-to-r from-moss/50 to-transparent' :
+            'bg-gradient-to-r from-steel/50 to-transparent'
           }`}
       />
 
@@ -237,7 +238,7 @@ export default function Projects() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center gap-4 mb-6">
-            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 02</span>
+            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 01</span>
             <div className="h-px w-16 bg-amber/20" />
           </div>
           <div className="flex items-end gap-6">

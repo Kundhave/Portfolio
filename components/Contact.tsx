@@ -34,7 +34,7 @@ export default function Contact() {
         >
           {/* Section header */}
           <div className="flex items-center gap-4 mb-6">
-            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 04</span>
+            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 05</span>
             <div className="h-px w-16 bg-amber/20" />
           </div>
 

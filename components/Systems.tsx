@@ -151,11 +151,11 @@ function ArchDiagram() {
               width="80" height="28"
               rx="2"
               fill={node.type === 'entry' ? 'rgba(224,123,57,0.15)' :
-                    node.type === 'monitor' ? 'rgba(74,127,165,0.15)' :
-                    'rgba(37,37,32,0.8)'}
+                node.type === 'monitor' ? 'rgba(74,127,165,0.15)' :
+                  'rgba(37,37,32,0.8)'}
               stroke={node.type === 'entry' ? 'rgba(224,123,57,0.5)' :
-                      node.type === 'monitor' ? 'rgba(74,127,165,0.5)' :
-                      'rgba(232,224,208,0.12)'}
+                node.type === 'monitor' ? 'rgba(74,127,165,0.5)' :
+                  'rgba(232,224,208,0.12)'}
               strokeWidth="1"
             />
             <text
@@ -164,8 +164,8 @@ function ArchDiagram() {
               fontSize="7"
               fontFamily="JetBrains Mono, monospace"
               fill={node.type === 'entry' ? '#e07b39' :
-                    node.type === 'monitor' ? '#4a7fa5' :
-                    '#a09080'}
+                node.type === 'monitor' ? '#4a7fa5' :
+                  '#a09080'}
               letterSpacing="0.05em"
             >
               {node.label}
@@ -196,7 +196,7 @@ export default function Systems() {
           transition={{ duration: 0.6 }}
         >
           <div className="flex items-center gap-4 mb-6">
-            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 01</span>
+            <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 04</span>
             <div className="h-px w-16 bg-amber/20" />
           </div>
           <h2 className="font-display text-5xl md:text-7xl text-cream tracking-widest">
@@ -224,19 +224,6 @@ export default function Systems() {
             <PrincipleCard key={p.code} principle={p} index={i} />
           ))}
         </div>
-
-        {/* Identity statement */}
-        <motion.div
-          className="mt-12 border-l-2 border-amber/40 pl-6 py-2"
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ delay: 0.7, duration: 0.6 }}
-        >
-          <p className="font-mono text-sm text-cream/70 leading-relaxed max-w-2xl italic">
-            "Looking to contribute immediately at a fast-moving startup where reliability and velocity both matter — not as competing priorities, but as the same goal."
-          </p>
-          <p className="font-mono text-xs text-amber/50 mt-3 tracking-wider">— KUNDHAVE S / OPEN_TO_WORK</p>
-        </motion.div>
       </div>
     </section>
   )

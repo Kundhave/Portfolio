@@ -4,10 +4,10 @@ import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 
 const navItems = [
-  { id: 'systems', label: 'SYSTEMS', index: '01' },
-  { id: 'projects', label: 'ACTIVE OPS', index: '02' },
-  { id: 'stack', label: 'STACK', index: '03' },
-  { id: 'processes', label: ' PARALLEL PROCESSES', index: '04' },
+  { id: 'projects', label: 'ACTIVE OPS', index: '01' },
+  { id: 'stack', label: 'STACK', index: '02' },
+  { id: 'processes', label: 'PARALLEL PROCESSES', index: '03' },
+  { id: 'systems', label: 'SYSTEMS', index: '04' },
   { id: 'contact', label: 'CONNECT', index: '05' },
 ]
 
@@ -25,7 +25,12 @@ export default function Nav() {
   useEffect(() => {
     const tick = () => {
       const now = new Date()
-      setTime(now.toISOString().replace('T', ' ').slice(0, 19) + 'Z')
+      setTime(now.toLocaleString('en-GB', {
+        timeZone: 'Asia/Kolkata',
+        year: 'numeric', month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit', second: '2-digit',
+        hour12: false,
+      }).replace(',', '') + ' IST')
     }
     tick()
     const interval = setInterval(tick, 1000)

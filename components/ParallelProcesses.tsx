@@ -1,8 +1,7 @@
 'use client'
 
-import { useRef, useState, useEffect, useCallback } from 'react'
-import { motion, useInView, AnimatePresence } from 'framer-motion'
-import Image from 'next/image'
+import { useRef, useState, useEffect } from 'react'
+import { motion, useInView } from 'framer-motion'
 
 // ─── SERVICE REGISTRY ────────────────────────────────────────────
 interface ServiceNode {
@@ -68,37 +67,6 @@ const VOLUNTEER = {
     period: 'Jun 2021 – Jun 2022',
     status: 'ARCHIVED' as const,
 }
-
-// ─── RUNTIME SIGNALS (hobbies / interests) ──────────────────────
-const RUNTIME_SIGNALS = [
-    { level: 'PROCESS', message: 'NatyaSudha Dance Club — Active node', meta: 'Nov 2023 – Jun 2025', color: 'steel' as const },
-    { level: 'CERT', message: 'Bharatanatyam — All 9 levels cleared', meta: 'Annamalai University', color: 'amber' as const },
-    { level: 'EVENT', message: 'Multiple dance competitions — Wins logged', meta: 'Performance metrics nominal', color: 'amber' as const },
-    { level: 'DAEMON', message: 'Sudoku solver — Low-priority background task', meta: 'PID: persistent', color: 'moss' as const },
-    { level: 'THREAD', message: 'Chess engine — Target: 1000 ELO', meta: 'Worker in progress', color: 'steel' as const },
-    { level: 'SIGNAL', message: 'Cafe hopping • Food • Beach • Friends', meta: 'I/O channels open', color: 'amber' as const },
-    { level: 'OUTPUT', message: 'Painting — Visual artifacts generated', meta: 'See memory buffer', color: 'moss' as const },
-]
-
-// ─── PHOTO NODES ─────────────────────────────────────────────────
-const PHOTOS = Array.from({ length: 11 }, (_, i) => ({
-    id: `MEM-${String(i + 1).padStart(2, '0')}`,
-    src: `/photos/photo-${String(i + 1).padStart(2, '0')}.jpeg`,
-}))
-
-const PHOTO_META = [
-    { node: 'DANCE', signal: 'HIGH' },
-    { node: 'TRAVEL', signal: 'MED' },
-    { node: 'EXPLORE', signal: 'HIGH' },
-    { node: 'ART', signal: 'HIGH' },
-    { node: 'NATURE', signal: 'MED' },
-    { node: 'CREATE', signal: 'HIGH' },
-    { node: 'VIBES', signal: 'MED' },
-    { node: 'PAINT', signal: 'HIGH' },
-    { node: 'CULTURE', signal: 'MED' },
-    { node: 'MEMORY', signal: 'LOW' },
-    { node: 'CAPTURE', signal: 'MED' },
-]
 
 // ─── COMPONENTS ──────────────────────────────────────────────────
 
@@ -175,202 +143,6 @@ function ServiceCard({ service, index }: { service: ServiceNode; index: number }
     )
 }
 
-function LogEntry({ log, index }: { log: typeof RUNTIME_SIGNALS[0]; index: number }) {
-    const ref = useRef(null)
-    const inView = useInView(ref, { once: true })
-    const colorMap = { amber: 'text-amber', steel: 'text-steel', moss: 'text-moss' }
-
-    return (
-        <motion.div
-            ref={ref}
-            className="flex items-start gap-3 group"
-            initial={{ opacity: 0, x: -10 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: index * 0.08, duration: 0.4 }}
-        >
-            <span className="font-mono text-[10px] text-cream-dim/20 mt-0.5 shrink-0 w-10 text-right">
-                {String(index).padStart(3, '0')}
-            </span>
-            <span className={`font-mono text-[10px] ${colorMap[log.color]}/60 tracking-wider shrink-0 w-16`}>
-                [{log.level}]
-            </span>
-            <div className="flex-1 min-w-0">
-                <span className="font-mono text-xs text-cream/60 group-hover:text-cream transition-colors">
-                    {log.message}
-                </span>
-                <span className="font-mono text-[10px] text-cream-dim/25 ml-2">
-          // {log.meta}
-                </span>
-            </div>
-        </motion.div>
-    )
-}
-
-// ─── MEMORY BUFFER (floating photo widget) ──────────────────────
-function MemoryBuffer() {
-    const [currentIndex, setCurrentIndex] = useState(0)
-    const [shuffledPhotos, setShuffledPhotos] = useState(PHOTOS)
-    const [isHovered, setIsHovered] = useState(false)
-    const containerRef = useRef<HTMLDivElement>(null)
-
-    // Shuffle on mount
-    useEffect(() => {
-        const a = [...PHOTOS]
-        for (let i = a.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [a[i], a[j]] = [a[j], a[i]]
-        }
-        setShuffledPhotos(a)
-    }, [])
-
-    // Auto-rotate every 4 seconds — pauses on hover
-    useEffect(() => {
-        if (isHovered) return
-        const id = setInterval(() => {
-            setCurrentIndex(prev => (prev + 1) % shuffledPhotos.length)
-        }, 4000)
-        return () => clearInterval(id)
-    }, [shuffledPhotos.length, isHovered])
-
-    const goNext = useCallback(() => {
-        setCurrentIndex(prev => (prev + 1) % shuffledPhotos.length)
-    }, [shuffledPhotos.length])
-
-    const goPrev = useCallback(() => {
-        setCurrentIndex(prev => (prev - 1 + shuffledPhotos.length) % shuffledPhotos.length)
-    }, [shuffledPhotos.length])
-
-    // Keyboard navigation when focused/hovered
-    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-        if (e.key === 'ArrowRight') { e.preventDefault(); goNext() }
-        if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev() }
-    }, [goNext, goPrev])
-
-    const current = shuffledPhotos[currentIndex]
-    const meta = PHOTO_META[PHOTOS.findIndex(p => p.id === current?.id)] || PHOTO_META[0]
-
-    return (
-        <div
-            ref={containerRef}
-            className="relative w-full max-w-[260px] outline-none"
-            tabIndex={0}
-            onMouseEnter={() => setIsHovered(true)}
-            onMouseLeave={() => setIsHovered(false)}
-            onKeyDown={handleKeyDown}
-        >
-            {/* Widget frame */}
-            <div className="border border-cream-faint/10 bg-charcoal-2 overflow-hidden">
-                {/* Header bar */}
-                <div className="flex items-center justify-between px-3 py-1.5 border-b border-cream-faint/8 bg-charcoal-3">
-                    <div className="flex items-center gap-1.5">
-                        <div className="w-1 h-1 rounded-full bg-steel/50 animate-pulse" />
-                        <span className="font-mono text-[8px] text-steel/40 tracking-widest">MEM_BUFFER</span>
-                    </div>
-                    <span className="font-mono text-[8px] text-cream-dim/20">
-                        {currentIndex + 1}/{shuffledPhotos.length}
-                    </span>
-                </div>
-
-                {/* Image viewport */}
-                <div className="relative aspect-[4/3] overflow-hidden bg-charcoal">
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={current?.id}
-                            className="absolute inset-0"
-                            initial={{ opacity: 0, scale: 1.08, filter: 'blur(6px)' }}
-                            animate={{ opacity: 1, scale: 1, filter: 'blur(0px)' }}
-                            exit={{ opacity: 0, scale: 0.96, filter: 'blur(4px)' }}
-                            transition={{ duration: 1.2, ease: [0.22, 1, 0.36, 1] }}
-                        >
-                            {current && (
-                                <Image
-                                    src={current.src}
-                                    alt={current.id}
-                                    fill
-                                    className="object-cover"
-                                    sizes="260px"
-                                />
-                            )}
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* Navigation arrows — visible on hover */}
-                    <div
-                        className={`absolute inset-0 flex items-center justify-between px-1.5 pointer-events-none transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
-                    >
-                        <button
-                            onClick={(e) => { e.stopPropagation(); goPrev() }}
-                            className="pointer-events-auto w-6 h-6 flex items-center justify-center bg-charcoal/60 border border-cream-faint/15 text-cream-dim/60 hover:text-cream hover:border-steel/40 transition-all duration-200 font-mono text-xs"
-                            aria-label="Previous photo"
-                        >
-                            ‹
-                        </button>
-                        <button
-                            onClick={(e) => { e.stopPropagation(); goNext() }}
-                            className="pointer-events-auto w-6 h-6 flex items-center justify-center bg-charcoal/60 border border-cream-faint/15 text-cream-dim/60 hover:text-cream hover:border-steel/40 transition-all duration-200 font-mono text-xs"
-                            aria-label="Next photo"
-                        >
-                            ›
-                        </button>
-                    </div>
-
-                    {/* Scan line overlay */}
-                    <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
-                        style={{
-                            backgroundImage: 'repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(232,224,208,0.5) 2px, rgba(232,224,208,0.5) 3px)',
-                        }}
-                    />
-
-                    {/* Subtle vignette */}
-                    <div className="absolute inset-0 pointer-events-none"
-                        style={{
-                            background: 'radial-gradient(ellipse at center, transparent 50%, rgba(15,15,13,0.6) 100%)',
-                        }}
-                    />
-                </div>
-
-                {/* Metadata footer */}
-                <div className="px-3 py-2 border-t border-cream-faint/8 bg-charcoal-3">
-                    <div className="flex items-center justify-between mb-1.5">
-                        <div>
-                            <div className="font-mono text-[8px] text-cream-dim/25 tracking-wider">NODE</div>
-                            <div className="font-mono text-[10px] text-steel/60 tracking-wide">{meta.node}</div>
-                        </div>
-                        <div className="text-right">
-                            <div className="font-mono text-[8px] text-cream-dim/25 tracking-wider">SIGNAL</div>
-                            <div className={`font-mono text-[10px] tracking-wide ${meta.signal === 'HIGH' ? 'text-amber/60' : meta.signal === 'MED' ? 'text-steel/50' : 'text-cream-dim/30'
-                                }`}>
-                                {meta.signal}
-                            </div>
-                        </div>
-                    </div>
-                    {/* Dot indicators */}
-                    <div className="flex items-center justify-center gap-1 pt-1 border-t border-cream-faint/5">
-                        {shuffledPhotos.map((_, i) => (
-                            <button
-                                key={i}
-                                onClick={() => setCurrentIndex(i)}
-                                className={`transition-all duration-300 rounded-full ${i === currentIndex
-                                    ? 'w-2.5 h-1 bg-steel/60'
-                                    : 'w-1 h-1 bg-cream-dim/15 hover:bg-cream-dim/30'
-                                    }`}
-                                aria-label={`Go to photo ${i + 1}`}
-                            />
-                        ))}
-                    </div>
-                </div>
-            </div>
-
-            {/* Soft glow behind widget */}
-            <div className="absolute -inset-4 -z-10 opacity-20 blur-xl"
-                style={{
-                    background: 'radial-gradient(ellipse at center, rgba(74,127,165,0.15) 0%, transparent 70%)',
-                }}
-            />
-        </div>
-    )
-}
-
 // ─── MAIN EXPORT ─────────────────────────────────────────────────
 export default function ParallelProcesses() {
     const ref = useRef(null)
@@ -394,14 +166,14 @@ export default function ParallelProcesses() {
                     transition={{ duration: 0.6 }}
                 >
                     <div className="flex items-center gap-4 mb-6">
-                        <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 04</span>
+                        <span className="font-mono text-xs text-amber/60 tracking-[0.4em]">MODULE // 03</span>
                         <div className="h-px w-16 bg-amber/20" />
                     </div>
                     <h2 className="font-display text-5xl md:text-7xl text-cream tracking-widest">
                         PARALLEL<br /><span className="text-amber">PROCESSES</span>
                     </h2>
                     <p className="mt-6 font-mono text-sm text-cream-dim/50 max-w-xl leading-relaxed">
-                        Concurrent services — leadership, volunteering, and non-deterministic runtime signals running alongside core engineering systems.
+                        Concurrent services — leadership and volunteering running alongside core engineering systems.
                     </p>
                 </motion.div>
 
@@ -432,7 +204,6 @@ export default function ParallelProcesses() {
 
                 {/* ─── VOLUNTEER OPS ──────────────────────────────── */}
                 <motion.div
-                    className="mb-12"
                     initial={{ opacity: 0, y: 20 }}
                     animate={inView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: 0.5, duration: 0.5 }}
@@ -461,39 +232,6 @@ export default function ParallelProcesses() {
                                 <span className="font-mono text-[10px] text-cream-dim/30 tracking-wider">PERIOD</span>
                                 <div className="font-mono text-[10px] text-cream-dim/40 mt-0.5">{VOLUNTEER.period}</div>
                             </div>
-                        </div>
-                    </div>
-                </motion.div>
-
-                {/* ─── RUNTIME SIGNALS + MEMORY BUFFER ────────────── */}
-                <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ delay: 0.6, duration: 0.5 }}
-                >
-                    <div className="flex items-center gap-3 mb-6">
-                        <span className="font-mono text-xs text-steel/50 border border-steel/20 px-2 py-0.5 tracking-widest">SIG</span>
-                        <span className="font-mono text-sm text-steel/40 tracking-[0.2em]">RUNTIME SIGNALS</span>
-                        <div className="flex-1 h-px bg-cream-faint/10" />
-                    </div>
-
-                    <div className="flex flex-col lg:flex-row gap-6">
-                        {/* Log feed */}
-                        <div className="flex-1 border border-cream-faint/10 bg-charcoal-2 p-5">
-                            <div className="flex items-center justify-between mb-4">
-                                <span className="font-mono text-[10px] text-cream-dim/30 tracking-widest">STDOUT</span>
-                                <span className="font-mono text-[10px] text-cream-dim/20">{RUNTIME_SIGNALS.length} entries</span>
-                            </div>
-                            <div className="space-y-3">
-                                {RUNTIME_SIGNALS.map((log, i) => (
-                                    <LogEntry key={i} log={log} index={i} />
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Floating memory buffer — right side */}
-                        <div className="flex items-end justify-center lg:justify-end shrink-0">
-                            <MemoryBuffer />
                         </div>
                     </div>
                 </motion.div>
