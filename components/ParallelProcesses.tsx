@@ -138,8 +138,8 @@ function ServiceCard({ service, index }: { service: ServiceNode; index: number }
         >
             {isActive && (
                 <div className={`absolute top-0 left-0 right-0 h-px ${service.color === 'amber' ? 'bg-gradient-to-r from-amber/40 to-transparent' :
-                        service.color === 'steel' ? 'bg-gradient-to-r from-steel/40 to-transparent' :
-                            'bg-gradient-to-r from-moss/40 to-transparent'
+                    service.color === 'steel' ? 'bg-gradient-to-r from-steel/40 to-transparent' :
+                        'bg-gradient-to-r from-moss/40 to-transparent'
                     }`} />
             )}
             <div className="flex items-center justify-between mb-4">
@@ -210,6 +210,8 @@ function LogEntry({ log, index }: { log: typeof RUNTIME_SIGNALS[0]; index: numbe
 function MemoryBuffer() {
     const [currentIndex, setCurrentIndex] = useState(0)
     const [shuffledPhotos, setShuffledPhotos] = useState(PHOTOS)
+    const [isHovered, setIsHovered] = useState(false)
+    const containerRef = useRef<HTMLDivElement>(null)
 
     // Shuffle on mount
     useEffect(() => {
@@ -221,19 +223,41 @@ function MemoryBuffer() {
         setShuffledPhotos(a)
     }, [])
 
-    // Auto-rotate every 4 seconds
+    // Auto-rotate every 4 seconds — pauses on hover
     useEffect(() => {
+        if (isHovered) return
         const id = setInterval(() => {
             setCurrentIndex(prev => (prev + 1) % shuffledPhotos.length)
         }, 4000)
         return () => clearInterval(id)
+    }, [shuffledPhotos.length, isHovered])
+
+    const goNext = useCallback(() => {
+        setCurrentIndex(prev => (prev + 1) % shuffledPhotos.length)
     }, [shuffledPhotos.length])
+
+    const goPrev = useCallback(() => {
+        setCurrentIndex(prev => (prev - 1 + shuffledPhotos.length) % shuffledPhotos.length)
+    }, [shuffledPhotos.length])
+
+    // Keyboard navigation when focused/hovered
+    const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
+        if (e.key === 'ArrowRight') { e.preventDefault(); goNext() }
+        if (e.key === 'ArrowLeft') { e.preventDefault(); goPrev() }
+    }, [goNext, goPrev])
 
     const current = shuffledPhotos[currentIndex]
     const meta = PHOTO_META[PHOTOS.findIndex(p => p.id === current?.id)] || PHOTO_META[0]
 
     return (
-        <div className="relative w-full max-w-[220px]">
+        <div
+            ref={containerRef}
+            className="relative w-full max-w-[260px] outline-none"
+            tabIndex={0}
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onKeyDown={handleKeyDown}
+        >
             {/* Widget frame */}
             <div className="border border-cream-faint/10 bg-charcoal-2 overflow-hidden">
                 {/* Header bar */}
@@ -264,11 +288,31 @@ function MemoryBuffer() {
                                     alt={current.id}
                                     fill
                                     className="object-cover"
-                                    sizes="220px"
+                                    sizes="260px"
                                 />
                             )}
                         </motion.div>
                     </AnimatePresence>
+
+                    {/* Navigation arrows — visible on hover */}
+                    <div
+                        className={`absolute inset-0 flex items-center justify-between px-1.5 pointer-events-none transition-opacity duration-300 ${isHovered ? 'opacity-100' : 'opacity-0'}`}
+                    >
+                        <button
+                            onClick={(e) => { e.stopPropagation(); goPrev() }}
+                            className="pointer-events-auto w-6 h-6 flex items-center justify-center bg-charcoal/60 border border-cream-faint/15 text-cream-dim/60 hover:text-cream hover:border-steel/40 transition-all duration-200 font-mono text-xs"
+                            aria-label="Previous photo"
+                        >
+                            ‹
+                        </button>
+                        <button
+                            onClick={(e) => { e.stopPropagation(); goNext() }}
+                            className="pointer-events-auto w-6 h-6 flex items-center justify-center bg-charcoal/60 border border-cream-faint/15 text-cream-dim/60 hover:text-cream hover:border-steel/40 transition-all duration-200 font-mono text-xs"
+                            aria-label="Next photo"
+                        >
+                            ›
+                        </button>
+                    </div>
 
                     {/* Scan line overlay */}
                     <div className="absolute inset-0 pointer-events-none opacity-[0.03]"
@@ -287,7 +331,7 @@ function MemoryBuffer() {
 
                 {/* Metadata footer */}
                 <div className="px-3 py-2 border-t border-cream-faint/8 bg-charcoal-3">
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between mb-1.5">
                         <div>
                             <div className="font-mono text-[8px] text-cream-dim/25 tracking-wider">NODE</div>
                             <div className="font-mono text-[10px] text-steel/60 tracking-wide">{meta.node}</div>
@@ -299,6 +343,20 @@ function MemoryBuffer() {
                                 {meta.signal}
                             </div>
                         </div>
+                    </div>
+                    {/* Dot indicators */}
+                    <div className="flex items-center justify-center gap-1 pt-1 border-t border-cream-faint/5">
+                        {shuffledPhotos.map((_, i) => (
+                            <button
+                                key={i}
+                                onClick={() => setCurrentIndex(i)}
+                                className={`transition-all duration-300 rounded-full ${i === currentIndex
+                                    ? 'w-2.5 h-1 bg-steel/60'
+                                    : 'w-1 h-1 bg-cream-dim/15 hover:bg-cream-dim/30'
+                                    }`}
+                                aria-label={`Go to photo ${i + 1}`}
+                            />
+                        ))}
                     </div>
                 </div>
             </div>

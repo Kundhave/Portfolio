@@ -45,22 +45,17 @@ export default function Contact() {
                 OPEN<br /><span className="text-amber">CHANNEL</span>
               </h2>
 
-              <div className="space-y-3 mb-10">
-                <p className="font-mono text-sm text-cream/70 leading-relaxed">
-                  Looking for a backend / systems engineer who can own a service from architecture to production?
-                </p>
+              <div className="mb-10">
                 <p className="font-mono text-sm text-cream-dim/50 leading-relaxed">
-                  Available for full-time roles at startups where reliability and velocity aren't a tradeoff.
+                  Backend & systems engineering — architecture to production.
                 </p>
               </div>
 
               {/* Status indicators */}
               <div className="space-y-3">
                 {[
-                  { label: 'AVAILABILITY', value: 'Open to offers', status: 'green' },
                   { label: 'LOCATION', value: 'Tamil Nadu, India', status: 'green' },
-                  { label: 'REMOTE', value: 'Preferred', status: 'green' },
-                  { label: 'RESPONSE TIME', value: '< 24 hours', status: 'amber' },
+                  { label: 'STATUS', value: 'Open to work', status: 'green' },
                 ].map((item) => (
                   <div key={item.label} className="flex items-center gap-4">
                     <div className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${item.status === 'green' ? 'bg-moss status-active' : 'bg-amber status-active'

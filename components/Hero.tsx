@@ -191,6 +191,17 @@ export default function Hero() {
               </p>
             </motion.div>
 
+            {/* Availability signal */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.8, delay: 0.55 }}
+            >
+              <span className="font-mono text-xs text-cream-dim/40 tracking-widest">
+                Open to work.
+              </span>
+            </motion.div>
+
             {/* CTA row */}
             <motion.div
               className="flex flex-wrap items-center gap-4"
