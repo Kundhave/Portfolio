@@ -218,22 +218,6 @@ export default function Stack() {
                 </div>
               ))}
             </div>
-
-            <div className="mt-6 pt-4 border-t border-cream-faint/10">
-              <div className="font-mono text-xs text-cream-dim/30 tracking-wider mb-3">LEADERSHIP</div>
-              <div className="space-y-2">
-                {[
-                  'AI/ML Tech Member — IETE Amrita',
-                  'Director of Ops — iDea Amrita',
-                  'Co-Head PR — Anokha Tech Fest',
-                ].map((role, i) => (
-                  <div key={i} className="flex items-start gap-2">
-                    <span className="text-steel/40 mt-0.5">→</span>
-                    <span className="font-mono text-xs text-cream/50">{role}</span>
-                  </div>
-                ))}
-              </div>
-            </div>
           </motion.div>
         </div>
       </div>

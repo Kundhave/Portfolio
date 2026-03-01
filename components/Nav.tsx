@@ -7,7 +7,8 @@ const navItems = [
   { id: 'systems', label: 'SYSTEMS', index: '01' },
   { id: 'projects', label: 'ACTIVE OPS', index: '02' },
   { id: 'stack', label: 'STACK', index: '03' },
-  { id: 'contact', label: 'CONNECT', index: '04' },
+  { id: 'processes', label: ' PARALLEL PROCESSES', index: '04' },
+  { id: 'contact', label: 'CONNECT', index: '05' },
 ]
 
 export default function Nav() {
@@ -39,9 +40,8 @@ export default function Nav() {
   return (
     <>
       <motion.nav
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? 'bg-charcoal/95 backdrop-blur-sm border-b border-cream-faint' : ''
-        }`}
+        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${scrolled ? 'bg-charcoal/95 backdrop-blur-sm border-b border-cream-faint' : ''
+          }`}
         initial={{ y: -60, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
