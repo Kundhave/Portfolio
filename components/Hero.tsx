@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion } from 'framer-motion'
 
 const TERMINAL_LINES = [
   { delay: 0, text: '$ init system_identity --engineer=backend+ai', type: 'cmd' },
@@ -10,13 +10,6 @@ const TERMINAL_LINES = [
   { delay: 1.9, text: '> event_driven_arch: ACTIVE', type: 'ok' },
   { delay: 2.4, text: '> observability: INSTRUMENTED', type: 'ok' },
   { delay: 2.9, text: '$ status: READY FOR PRODUCTION', type: 'cmd' },
-]
-
-const METRICS = [
-  { label: 'UPTIME', value: '99.9%', sub: 'target SLA' },
-  { label: 'LATENCY', value: '<50ms', sub: 'p95 response' },
-  { label: 'SYSTEMS', value: '6+', sub: 'deployed' },
-  { label: 'STACK DEPTH', value: 'FULL', sub: 'lifecycle' },
 ]
 
 function TerminalLine({ text, type, delay }: { text: string; type: string; delay: number }) {
@@ -100,14 +93,11 @@ function SystemGrid() {
 
 export default function Hero() {
   const ref = useRef<HTMLDivElement>(null)
-  const { scrollYProgress } = useScroll({ target: ref })
-  const y = useTransform(scrollYProgress, [0, 1], [0, 150])
-  const opacity = useTransform(scrollYProgress, [0, 0.5], [1, 0])
 
   return (
     <section
       ref={ref}
-      className="relative min-h-[85vh] flex flex-col justify-center overflow-hidden bg-charcoal"
+      className="relative pt-28 pb-16 flex flex-col justify-center overflow-hidden bg-charcoal"
       id="hero"
     >
       <SystemGrid />
@@ -129,9 +119,8 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      <motion.div
-        className="relative z-10 px-6 md:px-12 max-w-7xl mx-auto w-full pt-24 pb-12"
-        style={{ y, opacity }}
+      <div
+        className="relative z-10 px-6 md:px-12 max-w-7xl mx-auto w-full"
       >
         <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 items-start">
 
@@ -262,31 +251,7 @@ export default function Hero() {
             </div>
           </motion.div>
         </div>
-
-        {/* Bottom metrics strip */}
-        <motion.div
-          className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-px bg-cream-faint/10"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.9, duration: 0.6 }}
-        >
-          {METRICS.map((m, i) => (
-            <motion.div
-              key={m.label}
-              className="bg-charcoal px-6 py-5 group hover:bg-charcoal-2 transition-colors duration-300"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.0 + i * 0.1 }}
-            >
-              <div className="font-mono text-xs text-cream-dim/40 tracking-widest mb-2">{m.label}</div>
-              <div className="font-display text-3xl text-amber group-hover:text-cream transition-colors duration-300">
-                {m.value}
-              </div>
-              <div className="font-mono text-xs text-cream-dim/30 mt-1">{m.sub}</div>
-            </motion.div>
-          ))}
-        </motion.div>
-      </motion.div>
+      </div>
 
     </section>
   )
